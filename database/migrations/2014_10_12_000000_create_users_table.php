@@ -17,6 +17,7 @@ return new class extends Migration {
             $table->string('email')->unique();
             $table->date('birthdate');
             $table->string('password');
+            $table->tinyInteger('status')->default(1)->comment('1.pending 2.approved 3.rejected 4.terminated');
             $table->timestamps();
         });
     }

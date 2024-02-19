@@ -19,7 +19,22 @@ class MembersController extends Controller
     // 列表顯示所有會員（分頁）
     public function index()
     {
-        $members = User::paginate(10); // 假設每頁顯示10條記錄
+        $members = DB::table('users')
+            ->select(
+                'id',
+                'first_name',
+                'last_name',
+                'email',
+                'birthdate',
+                DB::raw("(CASE 
+                WHEN status = 1 THEN 'pending' 
+                WHEN status = 2 THEN 'approved' 
+                WHEN status = 3 THEN 'rejected' 
+                WHEN status = 4 THEN 'terminated' 
+                ELSE 'status error' 
+                END) as status")
+            )
+            ->paginate(10); //假設每頁顯示10條記錄
         return view('members.index', compact('members'));
     }
 
@@ -279,7 +294,23 @@ class MembersController extends Controller
             $memberIds = explode(',', $request->input('members'));
 
             // 獲取成員對象
-            $members = User::whereIn('id', $memberIds)->get();
+            $members = DB::table('users')
+                ->whereIn('id', $memberIds)
+                ->select(
+                    'id',
+                    'first_name',
+                    'last_name',
+                    'email',
+                    'birthdate',
+                    DB::raw("(CASE 
+                    WHEN status = 1 THEN 'pending' 
+                    WHEN status = 2 THEN 'approved' 
+                    WHEN status = 3 THEN 'rejected' 
+                    WHEN status = 4 THEN 'terminated' 
+                    ELSE 'status error' 
+                    END) as status")
+                )
+                ->get();
             return Excel::download(new MembersExport($members), 'members.xlsx');
         } catch (QueryException $e) {
             $info = $e->errorInfo;

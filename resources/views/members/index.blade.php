@@ -34,15 +34,15 @@
     <table class="table table-bordered">
         <tr>
             <th>No</th>
-            <th>First name</th>
-            <th>last name</th>
+            <th>name</th>
+            <th>status</th>
             <th width="280px">Action</th>
         </tr>
         @foreach ($members as $member)
             <tr>
                 <td>{{ $member->id }}</td>
-                <td>{{ $member->first_name }}</td>
-                <td>{{ $member->last_name }}</td>
+                <td>{{ $member->first_name . ' ' . $member->last_name }}</td>
+                <td>{{ $member->status }}</td>
                 <td>
                     <form action="{{ route('members.destroy', $member->id) }}" method="POST">
 

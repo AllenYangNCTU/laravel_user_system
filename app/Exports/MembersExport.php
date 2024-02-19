@@ -28,7 +28,8 @@ class MembersExport implements FromCollection, WithMapping, WithHeadings
             $user->first_name,
             $user->last_name,
             $user->email,
-            $user->birthdate
+            $user->birthdate,
+            $user->status
         ];
     }
 
@@ -38,7 +39,8 @@ class MembersExport implements FromCollection, WithMapping, WithHeadings
             'First Name',
             'Last Name',
             'Email',
-            'Birthdate'
+            'Birthdate',
+            'Status'
         ];
     }
 }
