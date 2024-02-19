@@ -7,3 +7,4 @@ Route::get('/', function () {
     return view('welcome');
 });
 Route::resource('members', MembersController::class);
+Route::get('/export-members', [MembersController::class, 'export'])->name('members.export');
