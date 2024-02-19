@@ -272,10 +272,52 @@ class MembersController extends Controller
         }
 
     }
-    public function export()
+    public function export(Request $request)
     {
         try {
-            return Excel::download(new MembersExport, 'members.xlsx');
+            // 解析成員ＩＤ
+            $memberIds = explode(',', $request->input('members'));
+
+            // 獲取成員對象
+            $members = User::whereIn('id', $memberIds)->get();
+            return Excel::download(new MembersExport($members), 'members.xlsx');
+        } catch (QueryException $e) {
+            $info = $e->errorInfo;
+            return redirect()->route('members.index')
+                ->with($info[0], $info[2]);
+        } catch (Exception $e) {
+            return redirect()->route('members.index')
+                ->with($e->getCode(), $e->getMessage());
+        }
+    }
+
+    public function search(Request $request, User $members)
+    {
+        try {
+            $query = User::query();
+
+            if ($request->filled('name') && $request->filled('email')) {
+                $name = $request->input('name');
+                $email = $request->input('email');
+                $query->where(function ($query) use ($name, $email) {
+                    $query->where('first_name', 'like', '%' . $name . '%')
+                        ->orWhere('last_name', 'like', '%' . $name . '%');
+                })
+                    ->where('email', 'like', '%' . $email . '%');
+            } elseif ($request->filled('name')) {
+                // 只有姓名搜索條件
+                $name = $request->input('name');
+                $query->where('first_name', 'like', '%' . $name . '%')
+                    ->orWhere('last_name', 'like', '%' . $name . '%');
+            } elseif ($request->filled('email')) {
+                // 只有電子郵件搜索條件
+                $email = $request->input('email');
+                $query->where('email', 'like', '%' . $email . '%');
+            }
+
+            $members = $query->paginate(10); // 假設每頁10筆
+
+            return view('members.index', compact('members'));
         } catch (QueryException $e) {
             $info = $e->errorInfo;
             return redirect()->route('members.index')

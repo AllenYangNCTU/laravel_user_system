@@ -8,3 +8,4 @@ Route::get('/', function () {
 });
 Route::resource('members', MembersController::class);
 Route::get('/export-members', [MembersController::class, 'export'])->name('members.export');
+Route::get('/members-search', [MembersController::class, 'search'])->name('members.search');

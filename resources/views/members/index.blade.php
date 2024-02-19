@@ -8,7 +8,8 @@
             </div>
             <div class="pull-right">
                 <a class="btn btn-success" href="{{ route('members.create') }}"> Create New member</a>
-                <a class="btn btn-success" href="{{ route('members.export') }}"> Export</a>
+                <a href="{{ route('members.export', ['members' => $members->pluck('id')->implode(',')]) }}"
+                    class="btn btn-primary">Export</a>
             </div>
         </div>
     </div>
@@ -18,6 +19,17 @@
             <p>{{ $message }}</p>
         </div>
     @endif
+
+    <form action="{{ route('members.search') }}" method="GET">
+        <div class="form-group">
+            <input type="text" name="name" placeholder="姓名搜索">
+        </div>
+        <div class="form-group">
+            <input type="text" name="email" placeholder="搜索">
+        </div>
+        <button type="submit">搜索</button>
+    </form>
+
 
     <table class="table table-bordered">
         <tr>
